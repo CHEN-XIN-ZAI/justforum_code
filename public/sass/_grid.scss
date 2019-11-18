@@ -1,0 +1,51 @@
+@mixin PC {
+    @media(max-width:1024px){
+        @content
+    }
+};
+@mixin ipad {
+    @media(max-width:768px) {
+        @content
+    }
+};
+@mixin iphone {
+    @media(max-width:480px) {
+        @content
+    }
+};
+@mixin iphone_min {
+    @media(max-width:320px) {
+        @content
+    }
+};
+@mixin User_Set ($width){
+    @media(max-width:$width) {
+        @content
+    }
+};
+
+@mixin PC_M {
+    @media(min-width:1024px){
+        @content
+    }
+};
+@mixin ipad_M {
+    @media(min-width:768px) {
+        @content
+    }
+};
+@mixin iphone_M {
+    @media(min-width:480px) {
+        @content
+    }
+};
+@mixin iphone_min_M {
+    @media(min-width:320px) {
+        @content
+    }
+};
+@mixin User_Set_M ($width){
+    @media(min-width:$width) {
+        @content
+    }
+};
