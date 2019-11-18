@@ -4,3 +4,4 @@ public/sass
 public/GulpEasy.exe
 public/js_edit
 webpack.config.js
+.gitignore
