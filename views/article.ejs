@@ -1,0 +1,131 @@
+<% layout('layout-head') -%>
+<% block('head', `
+    <title>${category.title} - 就是論壇</title>
+    <meta name="description" content="${category.content.split('/-justforum-/')[1] || ''}">
+
+    <meta itemprop="description" content="${category.content.split('/-justforum-/')[1] || ''}">
+    <meta itemprop="name" content="${category.title} - 就是論壇">
+    ${!category.content.split('/-justforum-/')[2] ? '':'<meta itemprop="image" content="'+category.content.split('/-justforum-/')[2]+'">'}
+
+    <meta property="og:title" content="${category.title} - 就是論壇" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="${layout_data.url}" />
+    <meta property="og:description" content="${category.content.split('/-justforum-/')[1] || ''}" />
+    ${!category.content.split('/-justforum-/')[2] ? '':'<meta property="og:image" content="'+category.content.split('/-justforum-/')[2]+'">'}
+
+    <meta name="twitter:card" content="summary">
+    <!-- <meta name="twitter:site" content="@publisher_handle">
+    <meta name="twitter:creator" content="@author_handle"> -->
+    <meta name="twitter:title" content="${category.title} - 就是論壇">
+    <meta name="twitter:description" content="${category.content.split('/-justforum-/')[1] || ''}">
+    ${!category.content.split('/-justforum-/')[2] ? '':'<meta name="twitter:image" content="'+category.content.split('/-justforum-/')[2]+'">'}
+    <link rel="stylesheet" href="/css/ckeditor.min.css">
+`)%>
+
+<section class="container py-3" data-type="<%=path_type[0]%>">
+    <div class="row">
+        
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="h3"><%=category.title%></h1>
+                    <div class="d-flex flex-wrap align-items-center">
+                        <small class="text-secondary mr-2">查看:<%=parseInt(category.watch) > 10000 ? (parseInt(category.watch)/10000).toFixed(2)+'萬'  : category.watch%></small>
+                        <small class="text-secondary">標籤 : <%=category.tag || '無。'%></small>
+                        
+                        <span class="author ml-auto">作者 : <%=author.nick || author.name%>
+                            <div class="card">
+                                <div class="card-body p-1">
+                                    <div class="sticker_img">
+                                        <div class="img-cover h-100 w-100"
+                                            style="background-image: url(<%=layout_data.user.sticker_img%>);">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </span>
+                        
+                    </div>
+                    
+                    <hr>
+                    <div class="text-center">
+                        <small class="text-secondary">
+                            最後編輯時間---<%=category.editor_time%>
+                        </small>
+                    </div>
+                    
+                    <article class="ck ck-content ck-editor__editable ck-rounded-corners ck-editor__editable_inline ck-blurred">
+                        <%-category.content.split('/-justforum-/')[0]%>
+                    </article>
+                </div>
+            </div>
+            <div id="user_res" class="comment card my-3" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy"
+                infinite-scroll-distance="start" data-key="<%=csrfToken%>" data-id="<%=category.id%>" data-title="<%=category.title%>">
+                <div class="card-header">
+                    {{num}}留言
+                </div>
+                <div class="card-body">
+                    <%if(auth ==''){%>
+                    <div class="text-center">
+                        <i class="fas fa-user"></i>
+                        <a href="/signin?reurl=<%=layout_data.url%>" class="text-secondary">登入方可留言</a>
+                    </div>
+                    <%}else{%>
+                        <form action="/article/msg" method="POST">
+                            <div class="media">
+                                <img class="d-flex mr-3" width="70" height="70"
+                                    src="<%=layout_data.user.sticker_img || '/img/user.png'%>" alt="">
+                                <div class="media-body">
+                                    <div class="h5 text-primary"><%=layout_data.user.nick || layout_data.user.name%></div>
+                                    <textarea class="form-control w-100" name="msg" id="text" cols="3"></textarea>
+                                    <div class="text-right mt-1">
+                                        <input type="hidden" name="id" value="<%=category.id%>">
+                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                        <input class="btn btn-primary" type="submit" value="送出">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    <%}%>
+                    
+                    <div v-for="item in article_show" class="media my-3">
+                        <img class="d-flex mr-3" width="50" height="50"
+                            :src="item.img || '/img/user.png'" style="border-radius: 50%;" alt="">
+                        <div class="user_msg media-body">
+                            <div class="h6 text-primary">{{item.name}}</div>
+                            <pre :class="item.pre ? 'text-break h-limit mb-1':'text-break mb-1'">{{item.msg}}</pre>
+                            <a @click.prevent="show($event)" href="#" v-if="item.pre" class="text-secondary small">顯示完整內容</a>
+                            <br v-if="item.pre">
+                            <small class="text-secondary">{{before_time(item.editor_time)}}</small>
+                            <div v-if="item.user" class="float-right">
+                                <form action="/article/msg_del" method="post">
+                                    <input type="hidden" name="id" value="<%=category.id%>">
+                                    <input type="hidden" name="key" :value="item.key">
+                                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                    <input type="hidden" name="reload" value="<%=layout_data.url%>">
+                                    <button class="btn btn-sm btn-danger" type="submit">刪除</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-secondary">
+                        <img v-if="!ending" src="/images/loading.gif" alt="">
+                        <template v-if="ending && data !== 'nodata'">---已經到底了喔---</template>
+                        <template v-if="data == 'nodata'">---沒有人留言---</template>
+                    </div>
+
+                </div>
+            </div>
+
+            
+        </div>
+        <%include layout_aside %>
+        
+    </div>
+    
+</section>
+
+<% script('/js/vue.min.js') -%>
+<% script('/js/article.js') -%>

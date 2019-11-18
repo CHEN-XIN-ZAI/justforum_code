@@ -1,0 +1,106 @@
+<% layout('layout-head') -%>
+<% block('head', `
+    <title>就是論壇 -就是監控</title>
+    <meta name="description" content="就是監控 - 只要安裝就是監控，不管人在哪，隨時都可監看電腦畫面。">
+`)%>
+
+<section class="container mb-3 py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 per-1000">
+            <div class="justcontrol">
+                <div class="card">
+                    <div class="card-body card-front">
+                        <div class="change">
+                            ⇄
+                        </div>
+                        <h1>就是監控 (尚未上線)</h1>
+                        <h3>只要安裝軟體在電腦上，隨時隨地，都可透過手機登入網站監視電腦一切舉動。</h3>
+                        <p>軟體名稱:就是監控</p>
+                        <p>軟體性質:監看程式</p>
+                        <p>支援系統:windows7以上、windows10</p>
+                        <p>軟體大小:50＜MB＞</p>
+                    </div>
+                </div>
+                <div class="card card-back w-100">
+                    <div class="card-body">
+                        <div class="change">
+                            ⇄
+                        </div>
+                        <ul class="d-flex w-100">
+                            <li class="rounded border border-secondary p-3">
+                                名稱:xxx
+                                <br>
+                                狀態:在線
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+</section>
+<!-- <script>
+    $(document).ready(function () {
+        $('.justcontrol .change').click(function (e) {
+            e.preventDefault();
+            $('.justcontrol').toggleClass('rotate');
+        });
+    });
+</script> -->
+
+
+<!-- <img class="img-s" src="/img/index-bg.jpg" width="100%" alt="" style="position: fixed;z-index: 99999; top: 0; left: 0;">
+<script>
+    (function init() {  
+        setTimeout(()=>{
+            if(socket.id){
+                socket.emit('add_watch_id',{id:socket.id,user:'帳號'});
+            }else{
+                init();
+            }
+        },1000);
+    })();
+    //boss上線
+    let boss = '';
+    socket.on('boss_id', function (boss) {
+        socket.emit('send_boss',{id:socket.id,user:'帳號',boss:boss});
+    });
+
+    //boss請求img
+    socket.on('req_img', function (msg) {
+        
+    });
+</script>
+<script>
+    let user = $('#user_id').data('id');
+    //檢查有人是否在線
+    (function init_only() {  
+        setTimeout(()=>{
+            if(socket.id){
+                socket.emit('req_online_id',{id:socket.id,user:user});
+            }else{
+                init_only();
+            }
+        },1000);
+    })();
+
+    socket.on('get_watch_list', function (msg) {
+        if(msg.msg == 'no_person'){
+            //沒有人在線
+        }
+    });
+    //列出清單
+    socket.on('online_id', function (msg) {
+        $('ul').append(`<li data-id="${msg.id}">${msg.name}</li>`);
+    });
+    //請求被監看者畫面
+    socket.emit('req_img',id);
+
+    //獲得畫面
+    socket.on('img', function (msg) {
+        $('.img-s').attr('src', msg);
+    });
+</script> 
+-->

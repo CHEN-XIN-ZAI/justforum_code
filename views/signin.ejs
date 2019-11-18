@@ -1,0 +1,162 @@
+<% layout('layout-head') -%>
+<% block('head', `
+    <title>就是論壇 - 登入 | 註冊</title>
+    <meta name="description" content="就是論壇 登入 註冊">
+`) -%>
+
+<section class="container">
+    <div class="d-sm-flex text-center justify-content-center align-items-center text-white display-1 my-4 py-5" style="position: relative;">
+        <i class="fab fa-asymmetrik mr-3"></i>
+        <h1 class="display-3 m-0">就是論壇</h1>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6 mb-3">
+
+            <div class="rounded" style="overflow: hidden;">
+                <!-- 登入切換 -->
+                <div class="w-100 bg-light">
+                    <div class="nav nav-tabs text-center">
+                        <a href="#register" class="nav-item nav-link w-50 rounded-0" data-toggle="tab">註冊</a>
+                        <a href="#sigin" class="nav-item nav-link w-50 rounded-0 active" data-toggle="tab">登入</a>
+                    </div>
+                </div>
+
+                <!-- 登入與註冊 -->
+                <div class="tab-content" style="background-color: white;">
+                    <!-- 註冊 -->
+                    <div class="tab-pane pb-4" id="register">
+                        <h2 class="text-center py-3 pt-4 m-0">電子郵件註冊</h2>
+                        <!-- email註冊 -->
+                        <form class="form-group pt-3 px-4">
+                            <div class="form-group mb-2">
+                                <!-- <label for="myname_r">姓名 :</label> -->
+                                <input class="form-control" type="text" name="myname" id="myname_r" maxlength="20"
+                                    value="" placeholder="姓名">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="email_r">E-mail :</label> -->
+                                <input class="form-control" type="email" name="email" id="email_r"
+                                    value="" placeholder="電子信箱">
+                                <div class="invalid-feedback text-right">
+                                    <span>E-mail格式錯誤</span>
+                                </div>
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="password_r">密 碼:</label> -->
+                                <input class="form-control" type="password" name="password" id="password_r"
+                                    value="" placeholder="密碼">
+                                <div class="invalid-feedback text-right">
+                                    <span>密 碼 格式錯誤，不可空白並且需輸入6個字元以上。</span>
+                                </div>
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="password_ok">確 認 密 碼:</label> -->
+                                <input class="form-control" type="password"" name=" password_ok" id="password_ok"
+                                    value="" placeholder="確認密碼">
+                                <div class="invalid-feedback text-right">
+                                    <span>與密碼不一致。</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <button id="apply" class="btn btn-primary" data-key="<%=csrfToken%>"
+                                    type="button">確認註冊</button>
+                            </div>
+                        </form>
+                        <div id="success" class="h2 p-3" style="display: none;">
+                            已發送驗證信至您的信箱，請先前往驗證您的E-mail，方可登入。
+                        </div>
+                    </div>
+
+                    <div class="tab-pane pb-4 show active" id="sigin">
+                        <h2 class="text-center py-3 pt-4 m-0">電子郵件登入</h2>
+                        <!-- email登入 -->
+                        <form class="form-group pt-2 px-4" action="/signin/signin" method="post">
+                            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                            <div class="form-group mb-2">
+                                <!-- <label for="email">E-mail :</label> -->
+                                <input class="form-control" type="email" name="email" id="email"
+                                    value="" placeholder="電子信箱">
+                            </div>
+                            <div class="form-group mb-2">
+                                <!-- <label for="password">密   碼:</label> -->
+                                <input class="form-control" type="password" name="password" id="password"
+                                    value="" placeholder="密碼">
+                                <input class="form-control" type="hidden" id="invalid-msg">
+                                <div class="text-right invalid-feedback">
+                                    帳號或密碼有誤
+                                </div>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" value="remember" id="remember">
+                                <label class="custom-control-label" for="remember">記住我</label>
+                            </div>
+
+                            <div class="text-right">
+                                <div class="d-block mb-3">
+                                    <button id="signin" class="btn btn-primary" type="button" data-key="<%=csrfToken%>"
+                                        data-reurl="<%=reurl%>">登入</button>
+                                </div>
+                                <a href="#" data-toggle="modal" data-target="#forget">忘記密碼?</a>
+                            </div>
+
+                        </form>
+
+                        <div class="px-5">
+                            <hr>
+                        </div>
+                        <!-- 其他登入 -->
+                        <div class="d-flex pt-3 justify-content-center display-4 icon-login-style">
+                            <span class="other">其他登入 :</span>
+                            <div class="facebook mx-2 icon-hover">
+                                <a href="#"><i class="fab fa-facebook"></i></a>
+                            </div>
+                            <div class="google mx-2 icon-hover">
+                                <a href="#"><i class="fab fa-google"></i></a>
+                            </div>
+                            <div class="yahoo mx-2 icon-hover">
+                                <a href="#"><i class="fab fa-yahoo"></i></a>
+                            </div>
+                            <div class="twitter mx-2 icon-hover">
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100" style="position: absolute; top: 0;left: 0;background-color: rgba(255, 255, 255, 0.6);">
+                                <p class="h2">尚未開放</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- modal -->
+    <div class="modal fade" id="forget" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-light">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">重置密碼</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-inline">
+                        <label for="reset_pwd">E-mail:</label>
+                        <input class="form-control flex-fill ml-3" type="email" name="email" id="reset_pwd">
+                        <div class="invalid-feedback text-right">
+                            <span>E-mail格式錯誤，或此E-mail不存在。</span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="reset_close" type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button id="reset_passwd" type="button" class="btn btn-primary"
+                        data-key="<%=csrfToken%>">送出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% script('/js/signin.js') -%>

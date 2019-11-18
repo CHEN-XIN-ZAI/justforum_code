@@ -1,0 +1,23 @@
+<div class="container">
+    <div class="row">
+        <div class="index_banner d-flex align-items-center col-md-12">
+            <%if(path_type.length){if(path_type.length < 3 && path_type[0] == 'home'){%>
+            <div class="ml-5 text-light z-index-1 animated flip delay-6">
+                <h3 class="d-inline h2">就是論壇</h3>
+                <div class="h4">把你想寫的文章，分享出去</div>
+            </div>
+            <%}else{%>
+            <div class="ml-5 text-light z-index-1 animated flip delay-6">
+                <h3 class="d-inline h2">就是論壇</h3>
+                <div class="h4">把你想寫的文章，分享出去</div>
+            </div>
+            <%}}%>
+            <%if(path_type.length){if(path_type.length < 3 && path_type[0] == 'home'){%>
+                <img class="moon hidden animated" src="/img/moon.png" alt="">
+            <%}else if(path_type.length >= 2){%>
+                <img class="moon hidden animated" src="/img/moon.png" alt="">
+            <%}}%>
+
+        </div>
+    </div>
+</div>

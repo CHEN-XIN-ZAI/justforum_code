@@ -1,0 +1,222 @@
+<% layout('layout-head') -%>
+<% block('head', `
+    <title>用戶設定</title>
+    <link id="f_icon" rel="shortcut icon" href="img/favicon.png">
+`) -%>
+
+<section class="container py-5">
+    <div class="row justify-content-center px-3">
+            <div class="col-12 col-lg-8 rounded bg-light p-4">
+                <div class="text-center h2 mb-3">
+                    使用者設定
+                </div>
+                <%if(msg.length !== 0){ %>
+                <div class="alert alert-warning my-2">
+                    <%=msg%>
+                </div>
+                <%}%>
+                <div class="row">
+                    <div class="col-12 col-md-3">
+                        <div class="rounded border border-scondary mb-3" style="overflow: auto;">
+                            <div class="nav flex-nowrap flex-md-column nav-pills user-md-min-w">
+                                <a class="nav-link active" data-toggle="pill" href="#user-info">
+                                    基本資料</a>
+                                <a class="nav-link" data-toggle="pill" href="#article-set">
+                                    文章管理</a>
+                                <a class="nav-link" data-toggle="pill" href="#account-set">
+                                   帳號管理</a>
+                                <!-- <a class="nav-link" data-toggle="pill" href="#user-ask">
+                                    客服問答</a> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-9">
+                        <div class="tab-content rounded border border-scondary p-3">
+                            <!-- 使用者資訊 -->
+                            <div class="tab-pane fade show active" id="user-info">
+                                <form class="form-group pt-3 px-4" action="/user/info" method="post">
+                                    <div class="text-center">
+                                        <div id="user_img">
+                                            <a href="<%if(layout_data.user.sticker_img){%><%=layout_data.user.sticker_img%><%}%>" data-lightbox="image" data-title="sticker">
+                                                <img class="img-thumbnail<%if(!layout_data.user.sticker_img){%> d-none<%}%>" src="<%if(layout_data.user.sticker_img){%><%=layout_data.user.sticker_img%><%}%>" alt="">
+                                            </a>
+                                            
+                                            <i class="fas fa-user fa-7x img-thumbnail bg-light text-dark p-3 <%if(layout_data.user.sticker_img){%> d-none<%}%>"></i>
+                                        </div>
+                                        <div class="w-100">
+                                            <span class="btn btn-success btn-sm fileinput-button mt-2">
+                                                <i class="fas fa-plus"></i>
+                                                <span>新增大頭貼...</span>
+                                                <input id="choose_user_img" type="file" accept=".jpg,.jpeg,.png,.gif,.bmp">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="account">暱稱 :</label>
+                                        <input class="form-control" type="text" name="nick" id="nick"
+                                            value="<%=layout_data.user.nick%>">
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="account">姓名 :</label>
+                                        <input class="form-control" type="text" name="name" id="name"
+                                            value="<%=layout_data.user.name%>">
+                                    </div>
+                                    
+                                    <div class="text-right">
+                                        <button id="user_set" class="btn btn-primary" type="button">存檔</button>
+                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                        <input id="user_submit" class="d-none" type="submit" value="">
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- 文章管理 -->
+                            <div id="article-set" class="tab-pane fade" v-infinite-scroll="loadMore"
+                                infinite-scroll-disabled="busy" infinite-scroll-distance="10" data-key="<%=csrfToken%>">
+                                <div class="d-flex btn-group mt-2">
+                                    <a @click.prevent="public" href="#" :class="[class_,class_focus[0]]">已發佈</a>
+
+                                    <a @click.prevent="draft" href="#" :class="[class_,class_focus[1]]">草稿</a>
+                                    <a href="/article/create" class="btn btn-primary rounded-0 flex-grow-0" target="_blank">新增文章</a>
+                                </div>
+                                <hr class="my-3">
+
+
+                                <ul class="p-0" style="list-style-type: none;">
+
+                                    <li v-for="item in article_show" class="border-bottom px-2 py-3">
+
+                                        <div class="d-sm-flex">
+                                            <div class="img-thumbnail wh-sm-100 mr-sm-3 mb-2 mb-sm-0">
+                                                <div v-if="item.content.split('/-justforum-/')[2] == '' " class="img-cover w-100 h-100" :style="{'background-image': 'url(/img/no_img.png)'}"></div>
+                                                <div v-else class="img-cover w-100 h-100" :style="{'background-image': 'url('+ item.content.split('/-justforum-/')[2] + ')'}"></div>
+                                            </div>
+
+                                            <div class="media-body">
+                                                <h5 class="mt-0 font-weight-bold text-break">{{item.title}}</h5>
+                                            <p class="m-0 text-break">{{item.content.split('/-justforum-/')[1]}}</p>
+                                                
+                                                
+                                                <div class="text-right">
+                                                    <i class="fas fa-clipboard-list"></i>
+                                                    {{item.category_name}}
+                                                    <i class="fas fa-clock"></i>
+                                                    {{todate(item.editor_time)}}
+                                                </div>
+                                                
+
+                                            </div>
+
+                                        </div>
+                                        <!-- 文章設定 -->
+                                        <div class="d-flex btn-group mt-2">
+                                            <form action="/user/user_article_del" method="post">
+                                                <input type="hidden" name="title" :value="item.title">
+                                                <input type="hidden" name="id" :value="item.id">
+                                                <input type="hidden" name="author" :value="item.author">
+                                                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                                <button @click="del_article" class="btn btn-danger rounded-0 flex-grow-0" type="submit">刪除</button>
+                                            </form>
+
+                                            <a :href="'/article/editor/'+item.id" target="_blank"
+                                                class="btn btn-outline-secondary rounded-0 flex-grow-1">編輯</a>
+
+                                            <a :href="'/article?id='+item.id" target="_blank"
+                                                class="btn btn-outline-secondary rounded-0 flex-grow-1">預覽</a>
+                                        </div>
+
+                                    </li>
+
+                                </ul>
+
+                                
+                                <div class="text-center text-secondary">
+                                    <img v-if="!ending" src="/images/loading.gif" alt="">
+                                    <template v-if="ending && data !== 'nodata'">---已經到底了喔---</template>
+                                    <template v-if="data == 'nodata'">---沒有資料喔---</template>
+                                </div>
+                            </div>
+                            <!-- 帳號管理 -->
+                            <div class="tab-pane fade" id="account-set">
+                                <form class="form-group pt-3 px-4" action="/user/update_pwd" method="post">
+
+                                    <div class="form-group mb-2">
+                                        <label for="account">帳號 :</label>
+                                        <input class="form-control" type="text" id="account"
+                                            value="<%=layout_data.user.email%>" disabled>
+                                    </div>
+                                    <div id="alter_passwd_modal" class="form-group mb-2">
+                                        <div class="d-flex">
+                                            <label for="">密 碼:</label>
+                                            <a id="alter_passwd" class="ml-auto" href="#">修改密碼</a>
+                                        </div>
+                                        <input class="form-control" type="password" value="**********************" disabled>
+                                    </div>
+                                    
+                                    <div id="alter_passwd_box" class="d-none">
+                                        <div class="form-group mb-2">
+                                            <label for="password">舊 密 碼:</label>
+                                            <input class="form-control" type="password" name="password"
+                                                id="password" required>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="newpassword">新 密 碼:</label>
+                                            <input class="form-control" type="password" name="newpassword"
+                                                id="newpassword" required>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="password_ok">確 認 密 碼:</label>
+                                            <input class="form-control" type="password" id="password_ok" required>
+                                        </div>
+                                        <div class="text-right">
+                                            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                            <input type="hidden" name="email" value="<%=layout_data.user.email%>">
+                                            <button class="btn btn-primary" type="submit">確定修改</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- <hr> -->
+                                    
+                                </form>
+                                <!-- <div>
+                                    <label class="text-secondary" for="">申請刪除帳號:自申請起7天內可登入，7天後，帳後將不存在。</label>
+                                    <div class="text-right">
+                                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                                        <button class="btn btn-danger">確定刪除</button>
+                                    </div>
+
+                                </div> -->
+                            </div>
+                            <!-- 客服問答 -->
+                            <!-- <div class="tab-pane fade" id="user-ask">
+                                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                    <li class="text-center">
+                                        <a class="nav-link active" data-toggle="pill" href="#client-question">我有問題</a>
+                                    </li>
+                                    <li class="text-center">
+                                        <a class="nav-link"data-toggle="pill" href="#question-list">問題列表</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div class="tab-pane text-right fade show active" id="client-question">
+                                        <input class="form-control mb-3" type="text" name="" id="" placeholder="標題">
+                                        <textarea class="form-control mb-3" name="" id="" style="height: 20vh;" placeholder="請輸入問題..."></textarea>
+                                        <button class="btn btn-primary">提交</button>
+                                    </div>
+                                    <div class="tab-pane fade" id="question-list">
+                                        <hr>
+                                        <h5 class="text-weight-blod h3">標題</h5>
+                                        <span>問題內容:</span><p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum blanditiis aliquid illo accusantium adipisci, expedita, dignissimos enim quae ex at ipsam earum sint, repellat eveniet totam iusto possimus saepe reiciendis?</p>
+                                        <span>客服回答:</span><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos architecto voluptatem pariatur nisi dicta velit delectus eum unde obcaecati. Reiciendis incidunt dignissimos totam dolor optio porro enim facilis illum doloribus!</p>
+                                        <hr>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+<% script('/js/vue.min.js') -%>
+<% script('/js/user.js') -%>
