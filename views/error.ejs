@@ -1,0 +1,28 @@
+<% layout('layout-head') -%>
+<% block('head', `
+    <title>找不到該頁面</title>
+`) -%>
+<div class="p-4">
+    <div class="container">
+        <div class="row justify-content-center align-items.center">
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h1><%= message %></h1>
+                        <h2><%= error.status %></h2>
+                        <!-- <pre><= error.stack ></pre> -->
+                        <div class="text-center text-secondary" style="font-size: 80px;">
+                            <i class="fas fa-question mx-4" style="transform: rotate(-30deg);"></i>
+                            <i class="fas fa-question mx-4" style="transform: rotate(30deg);"></i>
+                        </div>
+                        <div class="text-center" style="font-size: 180px;margin-top: -60px;">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+

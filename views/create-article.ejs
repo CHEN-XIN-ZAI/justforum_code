@@ -1,0 +1,99 @@
+<% layout('layout-head') -%>
+<% block('head', `
+    <title>就是論壇 - ${path_type[1]}</title>
+`) -%>
+
+<%include layout-banner %>
+<%include layouy_navbar %>
+<section class="container py-3">
+    <div class="card">
+        <div class="card-body">
+            <%if(msg.length !== 0){ %>
+            <div class="alert alert-warning">
+                <%=msg%>
+            </div>
+            <%}%>
+            <form id="article_create" action="<%if(!article){%>create<%}else{%><%=article.id%><%}%>" method="POST" class="row justify-content-center">
+                <div class="col-md-8 col-lg-9 mb-2 mb-md-0">
+                    <label for="article_title">請輸入標題</label>
+                    <input type="text" id="article_title" class="form-control" name="title" placeholder="標題" value="<%=article.title || ''%>" required>
+                    <div id="tag" class="d-flex align-items-center text-nowrap flex-wrap h3 my-2">
+                        <i class="fas fa-tag h5 mb-0 mt-1"></i>
+                        <span class="mr-2">標籤 :</span>
+                        <input type="hidden" name="tag" value="<%=article.tag || ''%>">
+                        <%if(article){%>
+                        <%for(index in article.tag_list){%>
+                            <button class="btn btn-primary btn-sm p-1 mr-1"><%=article.tag_list[index]%></button>
+                        <%}}%>
+                    </div>
+                    <hr>
+                    <div id="editor" class="border border-secondary mb-2" data-url="<%=layout_data.local_URL%>"><%if(article){%><%-article.content.split('/-justforum-/')[0]%><%}%></div>
+                    <input id="article_content" type="hidden" name="content" value="">
+                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                </div>
+                <div class="col-md-4 col-lg-3">
+                    <div class="card mb-3" style="box-shadow: none;">
+                        <h6 class="card-header">分類</h6>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="category">類型:</label>
+                                <select name="category" class="form-control form-control-sm" id="category">
+                                    
+                                    <%for(key in layout_data.categories){%>
+                                    <option value="<%=layout_data.categories[key].path%>" data-tag="<%for(tag in layout_data.categories[key].tag){%><%=layout_data.categories[key].tag[tag].name%> <%}%>" <%if(article.category == layout_data.categories[key].path){%>selected<%}%>>
+                                        <%=layout_data.categories[key].name%>
+                                    </option>
+                                    <%}%>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category_tag">標籤:</label>
+                                <select class="form-control form-control-sm mb-2" id="category_tag">
+                                </select>
+                                
+                                <div class="text-right">
+                                    <button type="button" class="btn btn-primary btn-sm dropdown"
+                                        data-toggle="dropdown">
+                                        自訂標籤
+                                    </button>
+                                    <div id="add-tag" class="dropdown-menu dropdown-menu-right p-2">
+                                        <input type="text" placeholder="標籤名稱">
+                                        <div class="dropdown-divider"></div>
+                                        <div class="text-right">
+                                            <button type="button" class="btn btn-primary btn-sm">添加</button>
+                                        </div>
+                                    </div>
+                                    <button id="this-tag-add" class="btn btn-primary btn-sm" type="button">新增標籤</button>
+                                </div>
+                                
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card mb-3" style="box-shadow: none;">
+                        <h6 class="card-header">是否公開</h6>
+                        <div class="card-body">
+                            <div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+                                <label class="btn btn-outline-primary w-100<%if(article){if(article.status == 'draft'){%> active<%}}%>">
+                                    <input type="radio" name="status" autocomplete="off" value="draft" required<%if(article){if(article.status == 'draft'){%> checked<%}}%>> 草稿
+                                </label>
+                                <label class="btn btn-outline-primary w-100<%if(!article){%> active<%}else if(article.status == 'public'){%> active<%}%>">
+                                    <input type="radio" name="status" autocomplete="off" value="public" required<%if(!article){%> checked<%}else if(article.status == 'public'){%> checked<%}%>> 公開
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-100">
+                        <input type="hidden" name="author" value="<%if(layout_data.user.nick){%><%=layout_data.user.nick%><%}else{%><%=layout_data.user.name%><%}%>">
+                        <button id="create_article" type="submit" class="btn btn-outline-primary w-100">儲存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <% script('/js/ckeditor.js') -%>
+    <% script('/js/article_create.js') -%>
+</section>
